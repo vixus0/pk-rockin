@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'yaml'
+require 'pky'
+
+if ARGV.size < 2
+  abort "Usage: #{__FILE__} pki.yml output_dir"
+end
+
+tree = YAML.load_file(ARGV[0])
+dir = ARGV[1]
+
+Dir.mkdir(dir)
+Dir.chdir(dir) do
+  Pky.traverse(tree).each do |path, ck|
+    puts(ck.path)
+    FileUtils.mkdir_p(path) if ck.children?
+    File.write("#{path}.crt.pem", ck.cert.to_pem)
+    File.write("#{path}.key.pem", ck.key.to_pem)
+  end
+end

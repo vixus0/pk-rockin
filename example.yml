@@ -1,0 +1,6 @@
+name: root_ca
+subject: Root CA
+certs:
+  - name: inter_ca
+    certs:
+      - child
